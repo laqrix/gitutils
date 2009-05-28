@@ -1,19 +1,41 @@
 #!/usr/bin/perl
-
-@lines = `git log --pretty=format:"%h:%p:%an" @ARGV`;
-
 print "digraph {\n";
 print "  node [shape=box];\n";
 print "  rankdir=TB;\n";
+
+@lines = `git log --all --pretty=format:"%h:%p:%an" @ARGV`;
 foreach $line (@lines) {
     $line =~ s/\r|\n//g;
     ($commit, $parents, $author) = split(/:/, $line);
-
-    print "  \"$commit\" [label=\"$author\\n$commit\"];\n";
+    print "  \"$commit\" [label=\"$commit\\n$author\"];\n";
     @parents = split(/ /, $parents);
     foreach $parent (@parents) {
 	$parent = "none" if ($parent eq "");
 	print "  \"$commit\" -> \"$parent\";\n";
     }
 }
+
+@lines = `git tag`;
+foreach $tag (@lines) {
+    $tag =~ s/\r|\n//g;
+    @morelines = `git log -1 $tag --pretty=format:"%h:%an" @ARGV`;
+    foreach $commit (@morelines) {
+    	$commit =~ s/\r|\n//g;
+        ($commit, $author) = split(/:/, $commit);
+        print "  \"$commit\" [label=\"$tag\\n$author\"];\n";
+    }
+}
+
+@lines = `git branch`;
+foreach $tag (@lines) {
+    $tag =~ m/^..(.*)(\r|\n)/;
+    $tag = $1;
+    @morelines = `git log -1 $tag --pretty=format:"%h:%an" @ARGV`;
+    foreach $commit (@morelines) {
+    	$commit =~ s/\r|\n//g;
+        ($commit, $author) = split(/:/, $commit);
+        print "  \"$commit\" [label=\"$tag\\n$author\"];\n";
+    }
+}
+
 print "}\n";

@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+
+@lines = `git log --pretty=format:"%h:%p:%an" @ARGV`;
+
+print "digraph {\n";
+print "  node [shape=box];\n";
+print "  rankdir=TB;\n";
+foreach $line (@lines) {
+    $line =~ s/\r|\n//g;
+    ($commit, $parents, $author) = split(/:/, $line);
+
+    print "  \"$commit\" [label=\"$author\\n$commit\"];\n";
+    @parents = split(/ /, $parents);
+    foreach $parent (@parents) {
+	$parent = "none" if ($parent eq "");
+	print "  \"$commit\" -> \"$parent\";\n";
+    }
+}
+print "}\n";

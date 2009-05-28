@@ -1,0 +1,47 @@
+#!/usr/bin/perl -w
+
+# Ideas:
+# - Don't include Merge commits (multiple parents?)
+# - Make the plot date oriented, so that the X-axis gives a sense of time.
+
+@lines = `git whatchanged --shortstat --pretty=format:"%h" @ARGV`;
+
+@files_changed = ();
+@insertions = ();
+@deletions = ();
+@deltas = ();
+foreach $line (@lines) {
+    $line =~ s/\r|\n//g;
+    #print "line: $line\n";
+    if ($line =~ /^\s*(\d+) files changed, (\d+) insertions\(\+\), (\d+) deletions\(\-\)/)
+    {
+	push @files_changed, $1;
+	push @insertions, $2;
+	push @deletions, -$3;
+	push @deltas, ($2 - $3);
+    }
+}
+
+sub print_data {
+    local(@data) = @_;
+    $index = 0;
+    foreach $data (reverse @data) {
+	print "$index\t$data\n";
+	$index++;
+    }
+    print "e\n";
+}
+
+print "set terminal png\n";
+print "set output \"plot.png\"\n";
+print "set yrange [-300:300]\n";
+print "plot '-' using 1:2:(0) with filledcurves above title 'Above', \\
+            '-' using 1:2:(0) with filledcurves below title 'Below'\n";
+print_data(@deltas);
+print_data(@deltas);
+
+exit;
+print "plot '-' using 1:2:(0) with filledcurves above title 'Above', \\
+            '-' using 1:2:(0) with filledcurves below title 'Below'\n";
+print_data(@insertions);
+print_data(@deletions);

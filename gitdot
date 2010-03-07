@@ -26,7 +26,7 @@ foreach $tag (@lines) {
     }
 }
 
-@lines = `git branch`;
+@lines = `git branch -a`;
 foreach $tag (@lines) {
     $tag =~ m/^..(.*)(\r|\n)/;
     $tag = $1;

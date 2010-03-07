@@ -1,0 +1,15 @@
+#!/usr/bin/perl
+print "Filename,Author,Count\n";
+foreach $file (@ARGV) {
+    @lines = `git blame "$file"`;
+    %counts = ();
+    foreach $line (@lines) {
+	$line =~ /\((.*) +\d\d\d\d-[^\)]+\)/;
+	$name = $1;
+	$name =~ s/\s*$//;
+	$counts{$name} += 1;
+    }
+    foreach $key (sort keys(%counts)) {
+	print "$file,$key,$counts{$key}\n";
+    }
+}

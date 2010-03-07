@@ -1,0 +1,12 @@
+#!/usr/bin/perl
+@lines = `git log --all --pretty=format:%an | sort | uniq`;
+foreach $author (@lines) {
+    $author =~ s/\r|\n//g;
+    $author_shell = $author;
+    $author_shell =~ s/\\/\\\\\\/g;
+    $commits = `git log --all --author="$author_shell" --oneline | wc -l`;
+    $commits =~ s/\r|\n//g;
+    $counts = `git log -w -M --author="$author_shell" --numstat | gawk '/^[0-9]+\t/ { add += \$1; del += \$2; } END {print add "," del}'`;
+    $counts =~ s/\r|\n//g;
+    printf "$author,$commits,$counts\n";
+}

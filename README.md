@@ -1,5 +1,9 @@
 Misc utilities for git
 
+gitbranches
+
+* useful to see who made the last commit to each branch and when
+
 gitcommits
 
 * generates number of commits by each author as comma separated values

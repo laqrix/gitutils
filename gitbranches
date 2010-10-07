@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+@branches = `git branch -r`;
+print "Branch,User,Date,Unix Date\n";
+foreach $branch (@branches) {
+    $branch =~ s/\r|\n//g;
+    $branch =~ s/^(\W+)//g;
+    #print "branch: $branch\n";
+    if ($branch =~ /->/) {
+	#print "skip $branch\n";
+    } else {
+	#print "check $branch\n";
+	$log = `git log -1 $branch --pretty=format:"%an,%ad,%at"`;
+	$log =~ s/\r|\n//g;
+	print "$branch,$log\n";
+    }
+}

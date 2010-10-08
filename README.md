@@ -23,3 +23,7 @@ gitplot
 
 * experiment to generate deltas for use with gnuplot
 * not that useful
+
+gitusers
+
+* useful to see when each user last committed to the repo

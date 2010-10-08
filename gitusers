@@ -1,0 +1,11 @@
+#!/usr/bin/perl
+@lines = `git log --all --pretty=format:%an | sort -u`;
+print "User,Commit,Date,Unix Date\n";
+foreach $author (@lines) {
+    $author =~ s/\r|\n//g;
+    $author_shell = $author;
+    $author_shell =~ s/\\/\\\\\\/g;
+    $commit = `git log -1 --all --author="$author_shell" --pretty=format:"%an,%h,%ad,%at"`;
+    $commit =~ s/\r|\n//g;
+    print "$commit\n";
+}

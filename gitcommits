@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-@lines = `git log --all --pretty=format:%an | sort | uniq`;
+@lines = `git log --all --pretty=format:%an | sort -u`;
 foreach $author (@lines) {
     $author =~ s/\r|\n//g;
     $author_shell = $author;
